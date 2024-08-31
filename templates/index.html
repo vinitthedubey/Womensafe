@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            margin-bottom: 50px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 50px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+        #video {
+            border: 3px solid white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Face Detection</h1>
+    <button id="startButton" onclick="startCamera()">Start Camera</button>
+    <div>
+        <img src="{{ url_for('video_feed') }}" id="video" style="display:none;" width="640" height="480">
+    </div>
+
+    <script>
+        function startCamera() {
+            document.getElementById('video').style.display = 'block';
+            document.getElementById('startButton').disabled = true; // Disable button after click
+        }
+    </script>
+</body>
+</html>
