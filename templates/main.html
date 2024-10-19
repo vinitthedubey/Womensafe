@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/img/favicon.ico" rel="icon">
+    <title>Women Safety Analytics - Main</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            transition: background-color 0.5s ease;
+        }
+
+        #safeCityButton {
+            display: none;
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Camera Feed and Detection Info</h1>
+
+    <div>
+        <img id="videoFeed" src="{{ url_for('video_feed') }}" style="width: 400px; height: 400px;" alt="Video Feed">
+    </div>
+
+    <h2>Detection Details:</h2>
+    <p>Men Count: <span id="menCount">0</span></p>
+    <p>Women Count: <span id="womenCount">0</span></p>
+    <p>SOS Status: <span id="sosStatus">No</span></p>
+    <p>Woman Surrounded: <span id="womanSurrounded">No</span></p>
+    <p>Woman Alone: <span id="womenlone">No</span></p>
+    <p>City: <span id="city">NA</span></p>
+    <h3>Hotspots:</h3>
+    <ul id="hotspotsList"></ul>
+
+    <button id="safeCityButton" onclick="resetBackground()">Safe City</button>
+
+    <div id="pieChart"></div>
+
+    <script>
+        // Function to reset the background color to white
+        function resetBackground() {
+            $('body').css('background-color', 'white');
+            $('#safeCityButton').hide();  // Hide the Safe City button
+        }
+
+        // Function to update the detection information from the server
+        function updateDetectionInfo() {
+            $.get('/getDetectionInfo', function(data) {
+                $('#menCount').text(data.menCount);
+                $('#womenCount').text(data.womenCount);
+                $('#sosStatus').text(data.sosStatus ? 'Yes' : 'No');
+                $('#womanSurrounded').text(data.womenSurrounded ? 'Yes' : 'No');
+                $('#womenlone').text(data.womenlone ? 'Yes' : 'No');
+                $('#city').text(data.city);
+
+                // Update hotspots
+                $('#hotspotsList').empty();
+                data.hotspots.forEach(function(hotspot) {
+                    $('#hotspotsList').append('<li>' + hotspot + '</li>');
+                });
+
+                // Change background color based on conditions
+                if (data.womenlone) {
+                    $('body').css('background-color', 'pink');
+                    setTimeout(function() {
+                        $('#safeCityButton').show();
+                    }, 10000);  // 10 seconds delay
+                }
+
+                if (data.strong_incident) {
+                    $('body').css('background-color', 'red');
+                    setTimeout(function() {
+                        $('#safeCityButton').show();
+                    }, 10000);  // 10 seconds delay
+                }
+
+                if (data.light_incident) {
+                    $('body').css('background-color', 'orange');
+                    setTimeout(function() {
+                        $('#safeCityButton').show();
+                    }, 10000);  // 10 seconds delay
+                }
+
+                // After updating detection info, also update pie chart based on the city
+                updatePieChart(data.city);  // Pass the city from data.city
+            });
+        }
+
+        // Function to update the pie chart for gender distribution based on the city
+        function updatePieChart(city) {
+            if (!city) return;  // If city is not defined, do nothing
+            $.ajax({
+                url: '/getCityData',
+                type: 'POST',
+                data: { city: city },  // Send the city from data.city
+                success: function(response) {
+                    const graph_json = JSON.parse(response);
+                    Plotly.newPlot('pieChart', graph_json.data, graph_json.layout);
+                },
+                error: function(xhr) {
+                    alert('City not found or no Total data available');
+                }
+            });
+        }
+
+        setInterval(updateDetectionInfo, 1000);  // Update every second
+    </script>
+
+</body>
+</html>

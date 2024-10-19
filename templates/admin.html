@@ -1,0 +1,70 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="static/img/favicon.ico" rel="icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Console</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+        .safe-button {
+            background-color: green;
+            color: white;
+        }
+        .unsafe-button {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center font-weight-bold">Admin Console</h1>
+        <a href="index1.html" class="btn btn-link float-end">Logout</a>
+
+        <h3>Select Country, State, and City</h3>
+        <div class="select_option">
+            <select class="form-select country" id="country-select" onchange="loadStates()">
+                <option selected>Select Country</option>
+            </select>
+            <select class="form-select state" id="state-select" onchange="loadCities()">
+                <option selected>Select State</option>
+            </select>
+            <select class="form-select city" id="city-select">
+                <option selected>Select City</option>
+            </select>
+
+            <br>
+            <!-- Hidden inputs to store the selected text values -->
+            <input type="hidden" id="selected_country" name="country">
+            <input type="hidden" id="selected_state" name="state">
+            <input type="hidden" id="selected_city" name="city">
+            <button class="btn btn-primary" onclick="submitData()">Submit</button>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6" id="related-articles">
+                <h4>Related Articles</h4>
+                <div id="google-search-results"></div>
+            </div>
+            <div class="col-md-6" id="plots">
+                <div id="pie-chart"></div>
+                <div id="bar-incidents"></div>
+                <div id="bar-reports"></div>
+            </div>
+        </div>
+
+        <button class="btn safe-button" onclick="updateSafe(true)">Safe</button>
+        <button class="btn unsafe-button" onclick="updateSafe(false)">Unsafe</button>
+    </div>
+
+    <script src="static/adminapp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</body>
+</html>
